@@ -54,6 +54,17 @@ function prontoToPattern(prontoText) {
   return { frequency, pattern };
 }
 
+/**
+ * Classic "standard" NEC frame: address, inverted address, command,
+ * inverted command. This is the format most non-Samsung remotes use —
+ * used here for the brute-force auto-scan feature.
+ */
+function necStandard(address, command) {
+  const addr = address & 0xff;
+  const cmd = command & 0xff;
+  return necPatternLSB([addr, (~addr) & 0xff, cmd, (~cmd) & 0xff]);
+}
+
 const SAMSUNG_TV = {
   name: 'Samsung',
   buttons: {
@@ -101,4 +112,17 @@ const BUTTON_LABELS = {
   mute: 'Дыбыссыз',
 };
 
-window.IR = { TV_BRANDS, BUTTON_LABELS, prontoToPattern };
+// Best-effort list of NEC "power" command bytes seen across a range of
+// budget/generic remotes. Not guaranteed for any specific model — this is
+// what the auto-scan feature cycles through.
+const SCAN_POWER_COMMANDS = [
+  0x02, 0x08, 0x0c, 0x10, 0x12, 0x1a, 0x1c, 0x40, 0x45, 0x59, 0x5f, 0x15,
+];
+
+window.IR = {
+  TV_BRANDS,
+  BUTTON_LABELS,
+  prontoToPattern,
+  necStandard,
+  SCAN_POWER_COMMANDS,
+};
