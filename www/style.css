@@ -1,0 +1,349 @@
+:root {
+  --body-bg: #15130f;
+  --panel: #201d18;
+  --panel-edge: #2a2620;
+  --button-face: #2b2721;
+  --button-face-pressed: #37322a;
+  --button-edge: #3c362d;
+  --power-accent: #b3452f;
+  --power-accent-dim: #7a3524;
+  --teal: #4e8c82;
+  --text-primary: #efe8dc;
+  --text-muted: #8c8578;
+  --text-faint: #5f594d;
+  --danger-bg: #3a231d;
+  --danger-text: #e0a894;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--body-bg);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  display: flex;
+  justify-content: center;
+  padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom) 0;
+}
+
+.mono {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+.stage {
+  width: 100%;
+  max-width: 420px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 18px 16px 12px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 2px 18px;
+}
+
+.led {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--text-faint);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.03);
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+  flex-shrink: 0;
+}
+
+.led.is-lit {
+  background: var(--teal);
+  box-shadow: 0 0 8px 1px var(--teal);
+}
+
+.wordmark {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--text-primary);
+  flex-grow: 1;
+}
+
+.screens {
+  display: flex;
+  background: var(--panel);
+  border: 1px solid var(--panel-edge);
+  border-radius: 999px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.screen-tab {
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.screen-tab.is-active {
+  background: var(--button-face);
+  color: var(--text-primary);
+}
+
+.ir-warning {
+  background: var(--danger-bg);
+  color: var(--danger-text);
+  font-size: 13px;
+  line-height: 1.5;
+  padding: 10px 14px;
+  border-radius: 12px;
+  margin-bottom: 14px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.remote-body {
+  background: var(--panel);
+  border: 1px solid var(--panel-edge);
+  border-radius: 28px;
+  padding: 22px 18px 26px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.brand-select {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 30px;
+  width: 100%;
+}
+
+.brand-pill {
+  flex: 1;
+  border: 1px solid var(--button-edge);
+  background: var(--button-face);
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 9px 4px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.brand-pill.is-active {
+  border-color: var(--teal);
+  color: var(--text-primary);
+  box-shadow: inset 0 0 0 1px var(--teal);
+}
+
+.control-grid {
+  display: grid;
+  grid-template-columns: 72px 1fr 72px;
+  align-items: center;
+  justify-items: center;
+  gap: 14px;
+  width: 100%;
+  margin-bottom: 26px;
+}
+
+.power-btn {
+  position: relative;
+  width: 108px;
+  height: 108px;
+  border-radius: 50%;
+  border: 1px solid var(--button-edge);
+  background: radial-gradient(circle at 35% 30%, #332d26, var(--button-face) 70%);
+  color: var(--power-accent);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.power-ring {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1px solid var(--power-accent-dim);
+  opacity: 0.5;
+}
+
+.power-icon {
+  font-size: 38px;
+  line-height: 1;
+}
+
+.rocker {
+  width: 72px;
+  border-radius: 20px;
+  border: 1px solid var(--button-edge);
+  background: var(--button-face);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.rocker-btn {
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  padding: 16px 0 10px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.rocker-icon {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.rocker-label {
+  font-size: 11px;
+  color: var(--text-faint);
+}
+
+.rocker-divider {
+  height: 1px;
+  background: var(--button-edge);
+  margin: 0 10px;
+}
+
+.mute-btn {
+  border: 1px solid var(--button-edge);
+  background: var(--button-face);
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 12px 28px;
+  border-radius: 14px;
+  cursor: pointer;
+}
+
+.hint {
+  margin-top: 22px;
+  margin-bottom: 0;
+  font-size: 12px;
+  color: var(--text-faint);
+  text-align: center;
+  line-height: 1.5;
+}
+
+.section-intro {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin: 0 0 18px;
+}
+
+.custom-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.custom-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--button-edge);
+  background: var(--button-face);
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+
+.custom-item-name {
+  flex-grow: 1;
+  font-size: 14px;
+}
+
+.custom-send {
+  border: none;
+  background: var(--teal);
+  color: #0e1a18;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.custom-delete {
+  border: none;
+  background: transparent;
+  color: var(--text-faint);
+  font-size: 18px;
+  line-height: 1;
+  padding: 4px 6px;
+  cursor: pointer;
+}
+
+.custom-empty {
+  font-size: 13px;
+  color: var(--text-faint);
+  padding: 6px 2px 4px;
+}
+
+.custom-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.custom-form input,
+.custom-form textarea {
+  background: var(--button-face);
+  border: 1px solid var(--button-edge);
+  color: var(--text-primary);
+  border-radius: 12px;
+  padding: 11px 13px;
+  font-size: 13px;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.custom-form textarea {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 11px;
+}
+
+.add-btn {
+  border: 1px solid var(--teal);
+  background: transparent;
+  color: var(--teal);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 11px;
+  border-radius: 12px;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+.statusbar {
+  padding: 14px 4px 4px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-faint);
+}
