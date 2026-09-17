@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+  <title>IR Remote</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="stage">
+    <header class="topbar">
+      <div class="led" id="statusLed"></div>
+      <div class="wordmark">IR пульт</div>
+      <div class="screens">
+        <button class="screen-tab is-active" data-screen="tv">ТВ</button>
+        <button class="screen-tab" data-screen="custom">Басқа</button>
+      </div>
+    </header>
+
+    <div id="irWarning" class="ir-warning hidden">
+      Бұл құрылғыда инфрақызыл таратқыш табылмады. Батырмалар жұмыс істемейді.
+    </div>
+
+    <section id="screen-tv" class="remote-body">
+      <div class="brand-select" id="brandSelect">
+        <button class="brand-pill is-active" data-brand="samsung">Samsung</button>
+        <button class="brand-pill" data-brand="lg">LG</button>
+        <button class="brand-pill" data-brand="sony">Sony</button>
+      </div>
+
+      <div class="control-grid">
+        <div class="rocker" data-action="volup-voldown">
+          <button class="rocker-btn" data-button="volup">
+            <span class="rocker-icon">▲</span>
+            <span class="rocker-label">Дауыс</span>
+          </button>
+          <div class="rocker-divider"></div>
+          <button class="rocker-btn" data-button="voldown">
+            <span class="rocker-icon">▼</span>
+          </button>
+        </div>
+
+        <button class="power-btn" data-button="power">
+          <span class="power-ring"></span>
+          <span class="power-icon">⏻</span>
+        </button>
+
+        <div class="rocker" data-action="chup-chdown">
+          <button class="rocker-btn" data-button="chup">
+            <span class="rocker-icon">▲</span>
+            <span class="rocker-label">Арна</span>
+          </button>
+          <div class="rocker-divider"></div>
+          <button class="rocker-btn" data-button="chdown">
+            <span class="rocker-icon">▼</span>
+          </button>
+        </div>
+      </div>
+
+      <button class="mute-btn" data-button="mute">Дыбыссыз</button>
+
+      <p class="hint" id="tvHint"></p>
+    </section>
+
+    <section id="screen-custom" class="remote-body hidden">
+      <p class="section-intro">
+        Кондиционер немесе басқа техника үшін Pronto Hex кодын қосыңыз.
+        Мұндай кодтарды <span class="mono">irdb.tk</span> немесе
+        <span class="mono">remotecentral.com</span> сайттарынан құрылғы
+        моделіңіз бойынша табуға болады.
+      </p>
+
+      <div id="customList" class="custom-list"></div>
+
+      <form id="customForm" class="custom-form">
+        <input type="text" id="customName" placeholder="Атауы (мыс. Кондиционер қосу)" required />
+        <textarea id="customCode" placeholder="0000 006C 0000 0022 00AD 00AD ..." rows="3" required></textarea>
+        <button type="submit" class="add-btn">+ Код қосу</button>
+      </form>
+    </section>
+
+    <footer class="statusbar">
+      <span id="statusText">Дайын</span>
+    </footer>
+  </div>
+
+  <script src="ircodes.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
