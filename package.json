@@ -1,0 +1,15 @@
+{
+  "name": "universal-remote",
+  "version": "1.0.0",
+  "description": "IR universal remote for TV and AC using phone's built-in IR blaster",
+  "scripts": {
+    "build": "echo 'static site, nothing to build'"
+  },
+  "dependencies": {
+    "@capacitor/core": "^6.1.2",
+    "@capacitor/android": "^6.1.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.1.2"
+  }
+}
