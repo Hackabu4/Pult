@@ -11,16 +11,19 @@
     <header class="topbar">
       <div class="led" id="statusLed"></div>
       <div class="wordmark">IR пульт</div>
-      <div class="screens">
-        <button class="screen-tab is-active" data-screen="tv">ТВ</button>
-        <button class="screen-tab" data-screen="custom">Басқа</button>
-      </div>
     </header>
+
+    <div class="screens screens-row">
+      <button class="screen-tab is-active" data-screen="tv">ТВ</button>
+      <button class="screen-tab" data-screen="scan">Автоскан</button>
+      <button class="screen-tab" data-screen="custom">Басқа</button>
+    </div>
 
     <div id="irWarning" class="ir-warning hidden">
       Бұл құрылғыда инфрақызыл таратқыш табылмады. Батырмалар жұмыс істемейді.
     </div>
 
+    <!-- TV screen -->
     <section id="screen-tv" class="remote-body">
       <div class="brand-select" id="brandSelect">
         <button class="brand-pill is-active" data-brand="samsung">Samsung</button>
@@ -62,6 +65,35 @@
       <p class="hint" id="tvHint"></p>
     </section>
 
+    <!-- Auto-scan screen -->
+    <section id="screen-scan" class="remote-body hidden">
+      <p class="section-intro">
+        Теледидар маркасы белгісіз болса, осы жерден кодтарды кезекпен
+        жіберіп көруге болады. Теледидар жанған/өшкен сәтте
+        <strong>«Тоқтату»</strong> батырмасын басыңыз.
+      </p>
+
+      <button class="add-btn scan-full-width" id="scanBrandsBtn">
+        Белгілі ТВ брендтерін скандау (Samsung/LG/Sony)
+      </button>
+
+      <div class="scan-address-row">
+        <label class="scan-label" for="scanAddress">NEC мекенжайы (hex, әдетте 00)</label>
+        <input type="text" id="scanAddress" value="00" maxlength="2" />
+      </div>
+
+      <button class="add-btn scan-full-width" id="scanCommandsBtn">
+        Кең таралған Power кодтарын скандау
+      </button>
+
+      <button class="mute-btn scan-full-width hidden" id="scanStopBtn">
+        Тоқтату
+      </button>
+
+      <p class="hint" id="scanProgress"></p>
+    </section>
+
+    <!-- Custom / AC screen -->
     <section id="screen-custom" class="remote-body hidden">
       <p class="section-intro">
         Кондиционер немесе басқа техника үшін Pronto Hex кодын қосыңыз.
