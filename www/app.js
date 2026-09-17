@@ -1,13 +1,19 @@
 (function () {
-  const { TV_BRANDS, BUTTON_LABELS, prontoToPattern } = window.IR;
+  const { TV_BRANDS, BUTTON_LABELS, prontoToPattern, necStandard, SCAN_POWER_COMMANDS } = window.IR;
 
   const statusLed = document.getElementById('statusLed');
   const statusText = document.getElementById('statusText');
   const irWarning = document.getElementById('irWarning');
   const tvHint = document.getElementById('tvHint');
+  const scanProgress = document.getElementById('scanProgress');
+  const scanStopBtn = document.getElementById('scanStopBtn');
+  const scanBrandsBtn = document.getElementById('scanBrandsBtn');
+  const scanCommandsBtn = document.getElementById('scanCommandsBtn');
+  const scanAddressInput = document.getElementById('scanAddress');
 
   let currentBrand = 'samsung';
   let hasIr = null;
+  let scanRunning = false;
 
   function getIrPlugin() {
     return window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.IrBlaster;
@@ -21,6 +27,10 @@
   function flashLed() {
     statusLed.classList.add('is-lit');
     setTimeout(() => statusLed.classList.remove('is-lit'), 220);
+  }
+
+  function delay(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   async function checkIrEmitter() {
@@ -54,25 +64,29 @@
       return;
     }
     try {
-      setStatus(`Жіберілуде: ${label} (${frequency} Гц)`);
       await plugin.transmit({ frequency, pattern });
       flashLed();
-      setStatus(`Жіберілді: ${label}`);
     } catch (e) {
       const msg = (e && e.message) || 'белгісіз қате';
       setStatus(`Қате: ${msg}`, true);
     }
   }
 
+  // --- Screen switching ---
+
   document.querySelectorAll('.screen-tab').forEach((tab) => {
     tab.addEventListener('click', () => {
+      if (scanRunning) return;
       document.querySelectorAll('.screen-tab').forEach((t) => t.classList.remove('is-active'));
       tab.classList.add('is-active');
       const target = tab.dataset.screen;
       document.getElementById('screen-tv').classList.toggle('hidden', target !== 'tv');
+      document.getElementById('screen-scan').classList.toggle('hidden', target !== 'scan');
       document.getElementById('screen-custom').classList.toggle('hidden', target !== 'custom');
     });
   });
+
+  // --- TV brand selector ---
 
   function updateTvHint() {
     const brand = TV_BRANDS[currentBrand];
@@ -93,6 +107,8 @@
     });
   });
 
+  // --- TV buttons ---
+
   document.querySelectorAll('[data-button]').forEach((btn) => {
     btn.addEventListener('click', () => {
       const key = btn.dataset.button;
@@ -104,8 +120,65 @@
       }
       const { frequency, pattern } = generator();
       sendPattern(frequency, pattern, `${brand.name} ${BUTTON_LABELS[key] || key}`);
+      setStatus(`Жіберілді: ${brand.name} ${BUTTON_LABELS[key] || key}`);
     });
   });
+
+  // --- Auto-scan ---
+
+  function setScanUiRunning(running) {
+    scanRunning = running;
+    scanBrandsBtn.disabled = running;
+    scanCommandsBtn.disabled = running;
+    scanAddressInput.disabled = running;
+    scanStopBtn.classList.toggle('hidden', !running);
+  }
+
+  function stopScan() {
+    scanRunning = false;
+  }
+
+  scanStopBtn.addEventListener('click', () => {
+    stopScan();
+    setScanUiRunning(false);
+    setStatus('Скан тоқтатылды');
+  });
+
+  scanBrandsBtn.addEventListener('click', async () => {
+    setScanUiRunning(true);
+    const brandKeys = Object.keys(TV_BRANDS);
+    for (let i = 0; i < brandKeys.length; i++) {
+      if (!scanRunning) break;
+      const brand = TV_BRANDS[brandKeys[i]];
+      scanProgress.textContent = `${i + 1}/${brandKeys.length}: ${brand.name} Power`;
+      const { frequency, pattern } = brand.buttons.power();
+      await sendPattern(frequency, pattern, `${brand.name} Power`);
+      await delay(900);
+    }
+    setScanUiRunning(false);
+    scanProgress.textContent = 'Скан аяқталды.';
+  });
+
+  scanCommandsBtn.addEventListener('click', async () => {
+    const addr = parseInt(scanAddressInput.value || '00', 16);
+    if (isNaN(addr)) {
+      setStatus('Мекенжай hex форматында болу керек (мыс. 00)', true);
+      return;
+    }
+    setScanUiRunning(true);
+    for (let i = 0; i < SCAN_POWER_COMMANDS.length; i++) {
+      if (!scanRunning) break;
+      const cmd = SCAN_POWER_COMMANDS[i];
+      scanProgress.textContent = `${i + 1}/${SCAN_POWER_COMMANDS.length}: code 0x${cmd.toString(16)}`;
+      const { frequency, pattern } = necStandard(addr, cmd);
+      await sendPattern(frequency, pattern, `Скан 0x${cmd.toString(16)}`);
+      await delay(900);
+    }
+    setScanUiRunning(false);
+    scanProgress.textContent = 'Скан аяқталды.';
+  });
+
+  // --- Custom codes (AC / other devices), stored in localStorage ---
 
   const STORAGE_KEY = 'ir-remote-custom-codes';
 
@@ -147,6 +220,7 @@
         try {
           const { frequency, pattern } = prontoToPattern(item.code);
           sendPattern(frequency, pattern, item.name);
+          setStatus(`Жіберілді: ${item.name}`);
         } catch (e) {
           setStatus(`Код қатесі: ${e.message}`, true);
         }
@@ -188,6 +262,8 @@
     codeInput.value = '';
     renderCustomList();
   });
+
+  // --- Init ---
 
   updateTvHint();
   renderCustomList();
