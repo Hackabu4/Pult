@@ -1,4 +1,4 @@
-name: Build APK
+name: Build Android APK
 
 on:
   push:
@@ -8,41 +8,26 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
-        
-    - name: Build with Android SDK
+
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v3
+
+    - name: Build APK with Gradle
       run: |
-        # Тізбектер мен ресурс папкаларын дайындау
-        mkdir -p res src/com/example/pult
-        mv MainActivity.java src/com/example/pult/ 2>/dev/null || true
-        
-        # 1. R.java файлын генерациялау
-        $ANDROID_HOME/build-tools/34.0.0/aapt package -f -m -J src -M AndroidManifest.xml -S res -I $ANDROID_HOME/platforms/android-34/android.jar
-        
-        # 2. Java кодын комплициялау
-        javac -d . -classpath $ANDROID_HOME/platforms/android-34/android.jar src/com/example/pult/MainActivity.java
-        
-        # 3. DEX файлын жасау
-        $ANDROID_HOME/build-tools/34.0.0/dx --dex --output=classes.dex com/example/pult/*.class
-        
-        # 4. Входтық APK пакетін жинау
-        $ANDROID_HOME/build-tools/34.0.0/aapt package -f -M AndroidManifest.xml -S res -I $ANDROID_HOME/platforms/android-34/android.jar -F app-unsigned.apk .
-        
-        # 5. Оңтайландыру және қол қою (Signing)
-        $ANDROID_HOME/build-tools/34.0.0/zipalign -f 4 app-unsigned.apk app-aligned.apk
-        keytool -genkey -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
-        $ANDROID_HOME/build-tools/34.0.0/apksigner sign --ks debug.keystore --ks-pass pass:android app-aligned.apk
-        mv app-aligned.apk Pult-Remote.apk
+        gradle init --type basic --dsl groovy
+        gradle assembleDebug
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: Pult-APK
-        path: Pult-Remote.apk
+        path: app/build/outputs/apk/debug/*.apk
