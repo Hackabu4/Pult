@@ -1,0 +1,9 @@
+{
+  "appId": "kz.remote.universal",
+  "appName": "IR Remote",
+  "webDir": "www",
+  "backgroundColor": "#12100E",
+  "android": {
+    "backgroundColor": "#12100E"
+  }
+}
